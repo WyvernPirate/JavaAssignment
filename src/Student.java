@@ -1,13 +1,22 @@
+import java.sql.Date;
+
 public class Student {
     private String firstName;
     private String lastName;
     private String program;
     private int year;
     private int studentId;
-    private String dateOfBirth;
+    private Date dateOfBirth;
+    private String username;
+    private String password;
+
+    public Student() {
+        this.studentId = 0;
+        this.lastName = "eric";
+    };
 
     // constructor
-    public Student(String firstName, String lastName, String program, int year, int studentId, String dateOfBirth) {
+    public Student(String firstName, String lastName, String program, int year, int studentId, Date dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.program = program;
@@ -57,12 +66,17 @@ public class Student {
         this.studentId = studentId;
     }
 
-    public String getDateOfBirth() {
+    public Date getDob() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(String dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
+    public void setDob(String dateOfBirth) {
+        this.dateOfBirth = Date.valueOf(dateOfBirth);
+    }
+
+    // check credentials
+    public boolean checkCredentials(String username, String password) {
+        return username.equals("student123") && password.equals("12345");
     }
 
     @Override

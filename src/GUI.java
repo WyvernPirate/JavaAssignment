@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.util.Arrays;
 
 public class GUI {
 
@@ -76,14 +78,14 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 // register functionality
                 String[] opt = new String[2];
-                opt[0] = "Admin";
+                opt[0] = "YES";
                 opt[1] = "NO";
                 String choice = (String) JOptionPane.showInputDialog(loginFrame, "Do you want to create a new Account",
                         "Confirmation", JOptionPane.QUESTION_MESSAGE, null, opt, opt[0]);
                 if (choice.equals("YES")) {
-                    adminFrame();
-                } else {
-
+                    // create new account
+                    loginFrame.dispose();
+                    registrationFrame();
                 }
             }
         });
@@ -121,9 +123,9 @@ public class GUI {
 
         // create components for panels
         JLabel welcome = new JLabel("Welcome Admin");
-        welcome.setLocation(0, 1);
+        welcome.setLocation(1, 1);
         JButton logoutButton = new JButton("Logout");
-        logoutButton.setLocation(1, 2);
+        logoutButton.setLocation(1, 3);
         JButton addStudentButton = new JButton("Add Student");
         JButton viewStudentButton = new JButton("View Student");
 
@@ -157,6 +159,92 @@ public class GUI {
         JFrame registrationFrame = new JFrame("Registration");
         registrationFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         registrationFrame.setSize(700, 400);
+
+        // create panels for registration
+        JPanel tPanel = new JPanel();
+        JPanel cPanel = new JPanel(new GridLayout(7, 2));
+        JPanel bPanel = new JPanel(new GridLayout(1, 2));
+
+        // create components for panels
+        JLabel create = new JLabel("Create a new Account");
+        JLabel fname = new JLabel("Enter First Name");
+        JTextArea fnameArea = new JTextArea();
+        JLabel lname = new JLabel("Enter Last Name");
+        JTextArea lnameArea = new JTextArea();
+        JLabel program = new JLabel("Enter you Program");
+        JTextArea programTextArea = new JTextArea();
+        JLabel yearLabel = new JLabel("Enter Year of Study");
+        JTextArea yJTextArea = new JTextArea();
+        JLabel dobLabel = new JLabel("Enter Date of Birth");
+        JTextArea dobTextArea = new JTextArea();
+        JLabel passwordLabel = new JLabel("Enter your password");
+        JPasswordField passwordTextArea = new JPasswordField(20);
+        JLabel passCon = new JLabel("Re-enter your password");
+        JPasswordField passConArea = new JPasswordField();
+        JButton registerButton = new JButton("Register");
+        JButton cancelButton = new JButton("Cancel");
+
+        // add functionality to buttons
+        registerButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // account creation
+                try {
+                    // check field values
+                    if (fnameArea.getText().isEmpty() || lnameArea.getText().isEmpty() ||
+                            programTextArea.getText().isEmpty() || yJTextArea.getText().isEmpty() ||
+                            dobTextArea.getText().isEmpty() || passwordTextArea.getPassword().length == 0 ||
+                            passConArea.getPassword().length == 0) {
+                        JOptionPane.showMessageDialog(null, "Please fill in all fields");
+                    } else {
+                        // get field values
+                        String fname = fnameArea.getText();
+                        String lname = lnameArea.getText();
+                        String program = programTextArea.getText();
+                        int year = Integer.parseInt(yJTextArea.getText());
+                        String dob = yJTextArea.getText();
+                        char[] password = passwordTextArea.getPassword();
+                        char[] confirmPassword = passConArea.getPassword();
+
+                        // check if passwords match
+                        if (!Arrays.equals(password, confirmPassword)) {
+                            JOptionPane.showMessageDialog(null, "Passwords do not match");
+                        } else {
+                            // create new student account
+                            Student newStudent = new Student();
+                            // save student to database or fi
+                            JOptionPane.showMessageDialog(null, "Account created successfully");
+                            registrationFrame.dispose();
+                            loginFrame();
+                        }
+                    }
+                } catch (Exception g) {
+                    g.printStackTrace();
+                }
+            }
+        });
+
+        // add components to panels
+        tPanel.add(create);
+        cPanel.add(fname);
+        cPanel.add(fnameArea);
+        cPanel.add(lname);
+        cPanel.add(lnameArea);
+        cPanel.add(program);
+        cPanel.add(programTextArea);
+        cPanel.add(yearLabel);
+        cPanel.add(yJTextArea);
+        cPanel.add(dobLabel);
+        cPanel.add(dobTextArea);
+        cPanel.add(passwordLabel);
+        cPanel.add(passwordTextArea);
+        cPanel.add(passCon);
+        cPanel.add(passConArea);
+        bPanel.add(registerButton);
+        bPanel.add(cancelButton);
+
+        registrationFrame.add(tPanel, BorderLayout.NORTH);
+        registrationFrame.add(cPanel, BorderLayout.CENTER);
+        registrationFrame.add(bPanel, BorderLayout.SOUTH);
 
         registrationFrame.setVisible(true);
 

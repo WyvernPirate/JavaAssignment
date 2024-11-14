@@ -16,13 +16,13 @@ public class Student {
     };
 
     // constructor
-    public Student(String firstName, String lastName, String program, int year, int studentId, Date dateOfBirth) {
+    public Student(String firstName, String lastName, String program, int year, Date dateOfBirth, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.program = program;
         this.year = year;
-        this.studentId = studentId;
         this.dateOfBirth = dateOfBirth;
+        this.password = password;
     }
 
     // getters and setters
@@ -74,6 +74,14 @@ public class Student {
         this.dateOfBirth = Date.valueOf(dateOfBirth);
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     // check credentials
     public boolean checkCredentials(String username, String password) {
         return username.equals("student123") && password.equals("12345");
@@ -90,4 +98,12 @@ public class Student {
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 '}';
     }
+}
+
+// class to create a user account and password
+class StudentAcc extends Student {
+    public void createStid(String password) {
+
+    }
+
 }

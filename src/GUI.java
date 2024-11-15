@@ -123,9 +123,9 @@ public class GUI {
 
         // create components for panels
         JLabel welcome = new JLabel("Welcome Admin");
-        welcome.setLocation(1, 1);
+        welcome.setLocation(1, 2);
         JButton logoutButton = new JButton("Logout");
-        logoutButton.setLocation(1, 3);
+        logoutButton.setLocation(3, 1);
         JButton addStudentButton = new JButton("Add Student");
         JButton viewStudentButton = new JButton("View Student");
 

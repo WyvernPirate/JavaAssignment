@@ -5,8 +5,8 @@ public class DatabaseController {
     // instance variables
     private Connection conn = null;
     private String url = "jdbc:mysql://localhost:3306/students";
-    private String username = "root";
-    private String password = "root";
+    private String username = "registry";
+    private String password = "letmein123";
 
     // method to connect to the database
     public boolean connect() {
@@ -14,7 +14,7 @@ public class DatabaseController {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             // establish the connection
-            conn = DriverManager.getConnection(url);
+            conn = DriverManager.getConnection(url, username, password);
             System.out.println("Connection successful");
 
             flag = true;
@@ -23,7 +23,7 @@ public class DatabaseController {
             e.printStackTrace();
 
         } catch (SQLException e) {
-            System.out.println("Error connecting to the database: ");
+            System.out.println("Error connecting to the database: " + e.getMessage());
             e.printStackTrace();
         }
         return flag;

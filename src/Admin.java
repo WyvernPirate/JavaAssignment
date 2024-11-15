@@ -21,7 +21,7 @@ public class Admin {
     }
 
     public boolean checkCredentials() {
-        return this.name.equals("admin123") && this.password.equals("12345");
+        return this.name.equals("registry") && this.password.equals("letmein123");
     }
 
 }

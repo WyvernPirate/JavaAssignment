@@ -1,4 +1,7 @@
 import javax.swing.*;
+
+import org.junit.platform.console.shadow.picocli.CommandLine.Help.Layout;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -123,9 +126,16 @@ public class GUI {
 
         // create components for panels
         JLabel welcome = new JLabel("Welcome Admin");
-        welcome.setLocation(1, 2);
+        welcome.setHorizontalAlignment(JLabel.CENTER);
         JButton logoutButton = new JButton("Logout");
-        logoutButton.setLocation(3, 1);
+        logoutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // logout functionality
+                JOptionPane.showMessageDialog(null, "You have been logged out");
+                adminFrame.dispose();
+                loginFrame();
+            }
+        });
         JButton addStudentButton = new JButton("Add Student");
         JButton viewStudentButton = new JButton("View Student");
 

@@ -4,7 +4,9 @@ public class DatabaseController {
 
     // instance variables
     private Connection conn = null;
-    private String url = "jdbc:mysql://localhost:3306/student";
+    private String url = "jdbc:mysql://localhost:3306/students";
+    private String username = "root";
+    private String password = "root";
 
     // method to connect to the database
     public boolean connect() {
@@ -42,9 +44,11 @@ public class DatabaseController {
             pstmt.executeUpdate();
             flag = true;
         } catch (SQLException e) {
-            System.out.println("Error creating student account: " + e.getMessage());
+            System.out.println("Error creating student account: ");
+            e.printStackTrace();
         } catch (Exception e) {
-            System.out.println("An error occurred: " + e.getMessage());
+            System.out.println("An error occurred: ");
+            e.printStackTrace();
         }
         return flag;
     }

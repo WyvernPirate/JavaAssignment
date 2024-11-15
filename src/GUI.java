@@ -195,30 +195,72 @@ public class GUI {
                             dobTextArea.getText().isEmpty() || passwordTextArea.getPassword().length == 0 ||
                             passConArea.getPassword().length == 0) {
                         JOptionPane.showMessageDialog(null, "Please fill in all fields");
-                    } else {
-                        // get field values
-                        String fname = fnameArea.getText();
-                        String lname = lnameArea.getText();
-                        String program = programTextArea.getText();
-                        int year = Integer.parseInt(yJTextArea.getText());
-                        String dob = yJTextArea.getText();
-                        char[] password = passwordTextArea.getPassword();
-                        char[] confirmPassword = passConArea.getPassword();
-
-                        // check if passwords match
-                        if (!Arrays.equals(password, confirmPassword)) {
-                            JOptionPane.showMessageDialog(null, "Passwords do not match");
-                        } else {
-                            // create new student account
-                            Student newStudent = new Student();
-                            // save student to database or fi
-                            JOptionPane.showMessageDialog(null, "Account created successfully");
-                            registrationFrame.dispose();
-                            loginFrame();
-                        }
+                        return;
                     }
+
+                    // get field values
+                    String fname = fnameArea.getText().trim();
+                    String lname = lnameArea.getText().trim();
+                    String program = programTextArea.getText().trim();
+                    String yearStr = yJTextArea.getText().trim();
+                    String dobStr = dobTextArea.getText().trim();
+                    char[] password = passwordTextArea.getPassword();
+                    char[] confirmPassword = passConArea.getPassword();
+
+                    // Validate first name and last name
+                    if (!fname.matches("[a-zA-Z]+")) {
+                        JOptionPane.showMessageDialog(null, "First name can only contain letters");
+                        return;
+                    }
+                    if (!lname.matches("[a-zA-Z]+")) {
+                        JOptionPane.showMessageDialog(null, "Last name can only contain letters");
+                        return;
+                    }
+
+                    // Validate program
+                    if (!program.matches("[a-zA-Z ]+")) {
+                        JOptionPane.showMessageDialog(null, "Program can only contain letters and spaces");
+                        return;
+                    }
+
+                    // Validate year of study
+                    int year;
+                    try {
+                        year = Integer.parseInt(yearStr);
+                        if (year < 1900 || year > 2100) {
+                            throw new NumberFormatException();
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(null,
+                                "Invalid year of study. Please enter a valid year (e.g., 2023).");
+                        return;
+                    }
+
+                    // Validate date of birth
+                    Date dob;
+                    try {
+                        dob = Date.valueOf(dobStr); // Ensure dobStr is in the correct format (yyyy-MM-dd)
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(null, "Invalid date of birth. Please use the format yyyy-MM-dd.");
+                        return;
+                    }
+
+                    // Check if passwords match
+                    if (!Arrays.equals(password, confirmPassword)) {
+                        JOptionPane.showMessageDialog(null, "Passwords do not match");
+                        return;
+                    }
+
+                    // create new student account
+                    Student newStudent = new Student(fname, lname, program, year, dob, password);
+                    // save student to database or file
+                    JOptionPane.showMessageDialog(null, "Account created successfully");
+                    registrationFrame.dispose();
+                    loginFrame();
+
                 } catch (Exception g) {
                     g.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "An unexpected error occurred. Please try again.");
                 }
             }
         });
@@ -249,4 +291,5 @@ public class GUI {
         registrationFrame.setVisible(true);
 
     }
+
 }

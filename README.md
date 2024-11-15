@@ -79,3 +79,64 @@ Methods to calculate final grades, SGPA, and CGPA
 - Input validation
 - File-related exception handling
 - Ensure all inputs are validated in the GUI
+
+## DOCUMENTATION OF WORK DONE SO FAR
+
+### Completed Features
+
+#### 1. User Authentication
+- Implemented login system for both students and the Directorate of Registry Services
+- Validated user credentials and authorized access to respective views
+
+#### 2. Classes and Objects
+
+##### Student Class
+- Defined instance variables:
+  - Full names
+  - Program
+  - Year of study
+  - Student ID
+  - Date of birth
+- Implemented methods for getting and setting instance variables
+
+##### Module Class
+- Defined instance variables:
+  - Module code
+  - Module name
+  - Module mark
+  - Number of credits
+  - Module year
+  - Module semester
+- Implemented methods for getting and setting instance variables
+
+#### 3. User Roles and Views
+
+##### Registry View
+- Implemented view to display all students
+- Implemented functionality to view and save transcripts for any student
+
+##### Student View
+- Implemented view to enter personal details (only once)
+- Implemented functionality to enter and save module information
+- Implemented methods to calculate SGPA (Semester Grade Point Average) and CGPA (Cumulative Grade Point Average)
+
+#### Grade Calculation Logic
+- Implemented methods to calculate final grades, SGPA, and CGPA
+
+#### Error Handling
+- Implemented input validation for all user inputs
+- Implemented file-related exception handling
+- Ensured all inputs are validated in the GUI
+
+### In-Progress Features
+
+#### 1. Transcript Generation
+- Currently implementing functionality to generate and write transcripts to a file in both TXT and PDF formats
+
+### Upcoming Features
+
+#### 1. Additional Error Handling
+- Plan to implement additional error handling for edge cases and unexpected user inputs
+
+#### 2. User Interface Enhancements
+- Plan to enhance the user interface to improve user experience and accessibility

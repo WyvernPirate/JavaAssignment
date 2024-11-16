@@ -121,12 +121,13 @@ public class GUI {
         // create the panels
         JPanel tPanel = new JPanel(new GridLayout(2, 3));
         JPanel cPanel = new JPanel(new GridLayout(2, 3, 50, 50));
+        GridBagConstraints gbc = new GridBagConstraints();
         JPanel bPanel = new JPanel();
         JPanel lPanel = new JPanel(new GridLayout(4, 1));
 
         // create components for panels
         JLabel welcome = new JLabel("Welcome Admin");
-        welcome.setHorizontalAlignment(JLabel.CENTER);
+
         JButton logoutButton = new JButton("Logout");
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -140,8 +141,12 @@ public class GUI {
         JButton viewStudentButton = new JButton("View Student");
 
         // add components to panels
-        tPanel.add(welcome);
-        tPanel.add(logoutButton);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        tPanel.add(welcome, gbc);
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        tPanel.add(logoutButton, gbc);
         lPanel.add(addStudentButton);
         lPanel.add(viewStudentButton);
 

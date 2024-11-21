@@ -206,7 +206,6 @@ public class GUI {
         JPanel lPanel = new JPanel(new GridLayout(3, 1));
         JPanel cPanel = new JPanel();
         JPanel bPanel = new JPanel();
-        JPanel wJPanel = new JPanel(new GridLayout(4, 1));
 
         // create components for panels
         JLabel welcome = new JLabel("Welcome to the  Student Portal User " + id);
@@ -215,9 +214,9 @@ public class GUI {
         JButton viewTranscriptButton = new JButton("Transcript");
         JButton modulesButton = new JButton("Modules");
         JButton addMButton = new JButton("Add");
-        addMButton.setVisible(false);
         JButton removeMButton = new JButton("Remove");
-        removeMButton.setVisible(false);
+        JButton editSButton = new JButton("Edit");
+        JButton editMButton = new JButton("Edit");
 
         // create table for grades
         String[] columns = { "Module Code", "Name", "Marks", "Credits", "Year", "Semester" };
@@ -235,12 +234,10 @@ public class GUI {
         lPanel.add(viewStudentButton);
         lPanel.add(viewTranscriptButton);
         lPanel.add(modulesButton);
-        wJPanel.add(addMButton);
-        wJPanel.add(removeMButton);
         // add button functionality
         logoutButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to logout?",
+                int result = JOptionPane.showConfirmDialog(cPanel, "Are you sure you want to logout?",
                         "Logout Confirmation", JOptionPane.YES_NO_OPTION);
                 if (result == JOptionPane.YES_OPTION) {
                     System.out.println("Logout button clicked");
@@ -256,10 +253,6 @@ public class GUI {
                 cPanel.setLayout(new BorderLayout());
                 JScrollPane scrollPane = new JScrollPane(table);
                 cPanel.add(scrollPane, BorderLayout.CENTER);
-                addMButton.setVisible(true);
-                removeMButton.setVisible(true);
-                wJPanel.revalidate();
-                wJPanel.repaint();
                 cPanel.revalidate();
                 cPanel.repaint();
                 // Add a refresh button to update the table
@@ -278,43 +271,170 @@ public class GUI {
                 });
                 JPanel buttonPanel = new JPanel();
                 buttonPanel.add(refreshButton);
+                buttonPanel.add(addMButton);
+                buttonPanel.add(removeMButton);
+                buttonPanel.add(editMButton);
                 cPanel.add(buttonPanel, BorderLayout.SOUTH);
             }
         });
 
         addMButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // add new module to table using input dialog
-                String moduleName = JOptionPane.showInputDialog(null, "Enter Module Name");
-                String moduleCode = JOptionPane.showInputDialog(null, "Enter Module Code");
-                String moduleMark = JOptionPane.showInputDialog(null, "Enter Module marks");
-                String moduleCredits = JOptionPane.showInputDialog(null, "Enter Module Credits");
-                String moduleYear = JOptionPane.showInputDialog(null, "Enter Module Year");
-                String moduleSemester = JOptionPane.showInputDialog(null, "Enter Module Semester");
+                // Create a new panel for adding a module
+                JPanel addModulePanel = new JPanel();
+                addModulePanel.setLayout(new GridLayout(0, 2));
 
-                if (moduleName != null && moduleCode != null && moduleCredits != null && moduleYear != null
-                        && moduleSemester != null) {
+                // Create fields for module details
+                JTextField moduleCodeField = new JTextField();
+                JTextField moduleNameField = new JTextField();
+                JTextField moduleMarkField = new JTextField();
+                JTextField moduleCreditsField = new JTextField();
+                JTextField moduleYearField = new JTextField();
+                JTextField moduleSemesterField = new JTextField();
+
+                // Add fields to the panel
+                addModulePanel.add(new JLabel("Module Code:"));
+                addModulePanel.add(moduleCodeField);
+                addModulePanel.add(new JLabel("Module Name:"));
+                addModulePanel.add(moduleNameField);
+                addModulePanel.add(new JLabel("Module Mark:"));
+                addModulePanel.add(moduleMarkField);
+                addModulePanel.add(new JLabel("Module Credits:"));
+                addModulePanel.add(moduleCreditsField);
+                addModulePanel.add(new JLabel("Module Year:"));
+                addModulePanel.add(moduleYearField);
+                addModulePanel.add(new JLabel("Module Semester:"));
+                addModulePanel.add(moduleSemesterField);
+
+                // Show the panel in a dialog
+                int result = JOptionPane.showConfirmDialog(cPanel, addModulePanel, "Add Module",
+                        JOptionPane.OK_CANCEL_OPTION);
+                if (result == JOptionPane.OK_OPTION) {
                     try {
-                        // add new module to database
-                        Double mark = Double.parseDouble(moduleMark);
-                        int credits = Integer.parseInt(moduleCredits);
-                        int year = Integer.parseInt(moduleYear);
-                        int semester = Integer.parseInt(moduleSemester);
+                        // Get the module details from the fields
+                        String moduleCode = moduleCodeField.getText();
+                        String moduleName = moduleNameField.getText();
+                        Double moduleMark = Double.parseDouble(moduleMarkField.getText());
+                        int moduleCredits = Integer.parseInt(moduleCreditsField.getText());
+                        int moduleYear = Integer.parseInt(moduleYearField.getText());
+                        int moduleSemester = Integer.parseInt(moduleSemesterField.getText());
 
-                        Module m = new Module(moduleCode, moduleName, mark, credits, semester, year);
+                        // Create a new module
+                        Module m = new Module(moduleCode, moduleName, moduleMark, moduleCredits, moduleSemester,
+                                moduleYear);
+
+                        // Add the module to the database
                         n.addModule(m, id);
 
-                        // add module to table
+                        // Add the module to the table
                         DefaultTableModel model = (DefaultTableModel) table.getModel();
-                        model.addRow(new Object[] { m.getCode(), m.getName(), m.getMark(), m.getCredits(),
-                                m.getYear(), m.getSemester() });
+                        model.addRow(new Object[] { m.getCode(), m.getName(), m.getMark(), m.getCredits(), m.getYear(),
+                                m.getSemester() });
+
+                        JOptionPane.showMessageDialog(cPanel, "Module Added successfully");
+
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(null,
+                        JOptionPane.showMessageDialog(cPanel,
                                 "Invalid input. Please enter valid numbers for credits, year, and semester.");
                     }
                 }
             }
         });
+
+        // remove module button functionality
+        removeMButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                // remove selected module from table and database
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    // confirmation of removal
+                    int result = JOptionPane.showConfirmDialog(cPanel, "Are you sure you want to remove this module?",
+                            "Remove Module", JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        DefaultTableModel model = (DefaultTableModel) table.getModel();
+                        String moduleCode = (String) model.getValueAt(selectedRow, 0);
+                        model.removeRow(selectedRow);
+                        // retrieve module code from removed row
+
+                        // remove module from database
+                        n.deleteModule(id, moduleCode);
+                        JOptionPane.showMessageDialog(cPanel, "Module removed successfully");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(cPanel, "Please select a module to remove");
+                }
+            }
+        });
+
+        // edit a module
+        editMButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // retrieve selected module details from table
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    DefaultTableModel model = (DefaultTableModel) table.getModel();
+                    String moduleCode = (String) model.getValueAt(selectedRow, 0);
+                    String moduleName = (String) model.getValueAt(selectedRow, 1);
+                    String moduleMark = String.valueOf(model.getValueAt(selectedRow, 2));
+                    String moduleCredits = String.valueOf(model.getValueAt(selectedRow, 3));
+                    String moduleYear = String.valueOf(model.getValueAt(selectedRow, 4));
+                    String moduleSemester = String.valueOf(model.getValueAt(selectedRow, 5));
+
+                    // create edit module dialog
+                    JPanel editModulePanel = new JPanel();
+                    editModulePanel.setLayout(new GridLayout(0, 2));
+
+                    JTextField moduleNameField = new JTextField(moduleName);
+                    JTextField moduleMarkField = new JTextField(String.valueOf(moduleMark));
+                    JTextField moduleCreditsField = new JTextField(moduleCredits);
+                    JTextField moduleYearField = new JTextField(moduleYear);
+                    JTextField moduleSemesterField = new JTextField(moduleSemester);
+                    editModulePanel.add(new JLabel("Module Name:"));
+                    editModulePanel.add(moduleNameField);
+                    editModulePanel.add(new JLabel("Module Mark:"));
+                    editModulePanel.add(moduleMarkField);
+                    editModulePanel.add(new JLabel("Module Credits:"));
+                    editModulePanel.add(moduleCreditsField);
+                    editModulePanel.add(new JLabel("Module Year:"));
+                    editModulePanel.add(moduleYearField);
+                    editModulePanel.add(new JLabel("Module Semester:"));
+                    editModulePanel.add(moduleSemesterField);
+
+                    int result = JOptionPane.showConfirmDialog(cPanel, editModulePanel, "Edit Module " + moduleCode,
+                            JOptionPane.OK_CANCEL_OPTION);
+                    if (result == JOptionPane.OK_OPTION) {
+                        // update module details
+                        try {
+                            Double mark = Double.parseDouble(moduleMarkField.getText());
+                            int credits = Integer.parseInt(moduleCreditsField.getText());
+                            int year = Integer.parseInt(moduleYearField.getText());
+                            int semester = Integer.parseInt(moduleSemesterField.getText());
+
+                            Module m = new Module(moduleCode, moduleNameField.getText(), mark, credits,
+                                    semester, year);
+                            n.editModule(m, id);
+
+                            // update table
+                            model.setValueAt(moduleCode, selectedRow, 0);
+                            model.setValueAt(moduleNameField.getText(), selectedRow, 1);
+                            model.setValueAt(moduleMarkField.getText(), selectedRow, 2);
+                            model.setValueAt(moduleCreditsField.getText(), selectedRow, 3);
+                            model.setValueAt(moduleYearField.getText(), selectedRow, 4);
+                            model.setValueAt(moduleSemesterField.getText(), selectedRow, 5);
+
+                            JOptionPane.showMessageDialog(cPanel, "Module " + moduleCode + " edited successfully");
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(cPanel,
+                                    "Invalid input. Please enter valid numbers for credits, year, and semester.");
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(cPanel, "Please select a module to edit");
+                }
+            }
+        });
+
         viewStudentButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // display student details
@@ -328,30 +448,114 @@ public class GUI {
                     studentDetailsPanel.add(new JLabel("Student ID:"));
                     studentDetailsPanel.add(new JLabel(String.valueOf(id)));
                     studentDetailsPanel.add(new JLabel("Name:"));
-                    studentDetailsPanel.add(new JLabel(studentInfo.getFirstName()));
+                    studentDetailsPanel.add(new JLabel(studentInfo.getFirstName() + " " + studentInfo.getLastName()));
                     studentDetailsPanel.add(new JLabel("Program:"));
                     studentDetailsPanel.add(new JLabel(studentInfo.getProgram()));
                     studentDetailsPanel.add(new JLabel("Year of Study:"));
                     studentDetailsPanel.add(new JLabel(String.valueOf(studentInfo.getYear())));
                     studentDetailsPanel.add(new JLabel("Date of Birth:"));
                     studentDetailsPanel.add(new JLabel(String.valueOf(studentInfo.getDob())));
-                    studentDetailsPanel.add(new JButton("Edit"));
+
+                    editSButton.setVisible(true);
+                    editSButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            // edit student details
+                            System.out.println("Edit Student button clicked");
+                            cPanel.removeAll();
+                            cPanel.setLayout(new BorderLayout());
+                            JPanel editStudentPanel = new JPanel();
+                            editStudentPanel.setLayout(new GridLayout(0, 2));
+                            JTextField firstNameField = new JTextField(studentInfo.getFirstName());
+                            JTextField lastNameField = new JTextField(studentInfo.getLastName());
+                            JTextField programField = new JTextField(studentInfo.getProgram());
+                            JTextField yearField = new JTextField(String.valueOf(studentInfo.getYear()));
+                            JTextField dobField = new JTextField(String.valueOf(studentInfo.getDob()));
+                            editStudentPanel.add(new JLabel("First Name:"));
+                            editStudentPanel.add(firstNameField);
+                            editStudentPanel.add(new JLabel("Last Name:"));
+                            editStudentPanel.add(lastNameField);
+                            editStudentPanel.add(new JLabel("Program:"));
+                            editStudentPanel.add(programField);
+                            editStudentPanel.add(new JLabel("Year of Study:"));
+                            editStudentPanel.add(yearField);
+                            editStudentPanel.add(new JLabel("Date of Birth (yyyy-mm-dd):"));
+                            editStudentPanel.add(dobField);
+                            JButton saveButton = new JButton("Save");
+                            saveButton.addActionListener(new ActionListener() {
+                                public void actionPerformed(ActionEvent e) {
+                                    // save edited student details
+                                    System.out.println("Save button clicked");
+                                    String firstName = firstNameField.getText();
+                                    String lastName = lastNameField.getText();
+                                    String program = programField.getText();
+                                    int year;
+                                    try {
+                                        year = Integer.parseInt(yearField.getText());
+                                    } catch (NumberFormatException ex) {
+                                        JOptionPane.showMessageDialog(cPanel,
+                                                "Invalid year of study. Please enter a valid year.");
+                                        return;
+                                    }
+                                    Date dob;
+                                    try {
+                                        dob = Date.valueOf(dobField.getText()); // Ensure dobStr is in the correct
+                                                                                // format (yyyy-MM-dd)
+                                    } catch (IllegalArgumentException ex) {
+                                        JOptionPane.showMessageDialog(cPanel,
+                                                "Invalid date of birth. Please use the format yyyy-MM-dd.");
+                                        return;
+                                    }
+
+                                    // Validate first name and last name
+                                    if (!firstName.matches("[a-zA-Z]+")) {
+                                        JOptionPane.showMessageDialog(null, "First name can only contain letters");
+                                        return;
+                                    }
+                                    if (!lastName.matches("[a-zA-Z]+")) {
+                                        JOptionPane.showMessageDialog(null, "Last name can only contain letters");
+                                        return;
+                                    }
+
+                                    // Validate program
+                                    if (!program.matches("[a-zA-Z ]+")) {
+                                        JOptionPane.showMessageDialog(null,
+                                                "Program can only contain letters and spaces");
+                                        return;
+                                    }
+
+                                    Student p = new Student(firstName, lastName, program, year, dob);
+                                    // update student info in database
+                                    n.updateStudentInfo(p, id);
+                                    // refresh student details panel
+                                    viewStudentButton.doClick();
+                                }
+                            });
+                            cPanel.add(editStudentPanel, BorderLayout.CENTER);
+                            cPanel.add(saveButton, BorderLayout.SOUTH);
+                            cPanel.revalidate();
+                            cPanel.repaint();
+                        }
+                    });
+                    JPanel buttonPanel = new JPanel();
+                    buttonPanel.add(editSButton);
                     cPanel.add(studentDetailsPanel, BorderLayout.CENTER);
+                    cPanel.add(buttonPanel, BorderLayout.SOUTH);
                 } else {
                     cPanel.add(new JLabel("No student info found"), BorderLayout.CENTER);
                 }
                 cPanel.revalidate();
                 cPanel.repaint();
             }
+
         });
+
+        // transcript button functionality
 
         // add panels to frame
         studentFrame.add(tPanel, BorderLayout.NORTH);
         studentFrame.add(lPanel, BorderLayout.WEST);
         studentFrame.add(cPanel, BorderLayout.CENTER);
         studentFrame.add(bPanel, BorderLayout.SOUTH);
-        studentFrame.add(wJPanel, BorderLayout.EAST);
-
         studentFrame.setVisible(true);
     }
 

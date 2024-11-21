@@ -73,6 +73,28 @@ public class DatabaseController {
         return flag;
     }
 
+    // update student info
+    public boolean updateStudentInfo(Student p, int id) {
+        boolean flag = false;
+        String query = "UPDATE Student SET Name = ?, Surname = ?, Program = ?, Year = ?, Dob = ? WHERE StudentID = ?";
+        try (PreparedStatement pstmt = this.conn.prepareStatement(query)) {
+            pstmt.setString(1, p.getFirstName());
+            pstmt.setString(2, p.getLastName());
+            pstmt.setString(3, p.getProgram());
+            pstmt.setInt(4, p.getYear());
+            pstmt.setDate(5, p.getDob());
+            pstmt.setInt(6, id);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                flag = true;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating student info: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
     // retrieve student information
     public Student retrieveStudentInfo(int studentId) {
         Student p = null;
@@ -119,6 +141,7 @@ public class DatabaseController {
         return flag;
     }
 
+    // retrieve modules from the the database
     public List<Module> retrieveAllModules(int StudentID) {
         List<Module> modules = new ArrayList<>();
         String query = "SELECT * FROM Modules WHERE StudentID = ?";
@@ -141,6 +164,54 @@ public class DatabaseController {
             e.printStackTrace();
         }
         return modules;
+    }
+
+    // delete a module from database
+    public boolean deleteModule(int studentID, String moduleCode) {
+        boolean flag = false;
+        String query = "DELETE FROM Modules WHERE StudentID = ? AND ModuleID = ?";
+        try (PreparedStatement pstmt = this.conn.prepareStatement(query)) {
+            pstmt.setInt(1, studentID);
+            pstmt.setString(2, moduleCode);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                flag = true;
+                System.out.println("Module successfully deleted");
+            } else {
+                System.out.println("Module not found");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error deleting module: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    // edit a module from database
+    public boolean editModule(Module m, int studentID) {
+        boolean flag = false;
+        String query = "UPDATE Modules SET ModuleName = ?, Marks = ?, ModuleCredits = ?, Semester= ?, Year = ? WHERE StudentID = ? AND ModuleID = ?";
+        try (PreparedStatement pstmt = this.conn.prepareStatement(query)) {
+            pstmt.setString(1, m.getName());
+            pstmt.setDouble(2, m.getMark());
+            pstmt.setInt(3, m.getCredits());
+            pstmt.setInt(4, m.getSemester());
+            pstmt.setInt(5, m.getYear());
+            pstmt.setInt(6, studentID);
+            pstmt.setString(7, m.getCode());
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                flag = true;
+                System.out.println("Module successfully updated");
+            } else {
+                System.out.println("Module not found");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating module: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return flag;
+
     }
 
     // Close the database connection

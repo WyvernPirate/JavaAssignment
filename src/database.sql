@@ -14,5 +14,17 @@ CREATE TABLE Student (
 INSERT INTO Student(StudentID, Name, Surname, Program, Year, Dob)
 VALUES
 (1, 'John', 'Doe', 'Computer Science', 1, '1990-01-01'),
-(2, 'Jane', 'Doe', 'Computer Science', 1, '1991-01-01');
+(2, 'Jane', 'Doe', 'Computer Science', 1, '1991-01-01'),
+(3, 'Alice', 'Smith', 'Mathematics', 2, '1992-01-01'),
+(4, 'Bob', 'Johnson', 'Engineering', 3, '1993-01-01');
 
+--create a modules class with foreign key studentID
+CREATE TABLE Modules (
+    StudentID INT NOT NULL,
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+    ModuleName VARCHAR(255) NOT NULL,
+    ModuleID INT PRIMARY KEY,
+    ModuleCredits INT NOT NULL,
+    Semester INT NOT NULL,
+    Year INT NOT NULL
+    );

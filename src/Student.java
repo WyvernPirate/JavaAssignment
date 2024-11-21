@@ -8,7 +8,6 @@ public class Student {
     private int studentId;
     private Date dateOfBirth;
     protected String username;
-    private char[] password;
 
     public Student() {
         this.studentId = 0;
@@ -16,13 +15,12 @@ public class Student {
     };
 
     // constructor
-    public Student(String firstName, String lastName, String program, int year, Date dob, char[] password2) {
+    public Student(String firstName, String lastName, String program, int year, Date dob) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.program = program;
         this.year = year;
         this.dateOfBirth = dob;
-        this.password = password2;
     }
 
     // getters and setters
@@ -70,16 +68,8 @@ public class Student {
         return dateOfBirth;
     }
 
-    public void setDob(String dateOfBirth) {
-        this.dateOfBirth = Date.valueOf(dateOfBirth);
-    }
-
-    public char[] getPassword() {
-        return password;
-    }
-
-    public void setPassword(char[] password) {
-        this.password = password;
+    public void setDob(Date doB) {
+        this.dateOfBirth = doB;
     }
 
     // check credentials for existing acc from database
@@ -97,12 +87,5 @@ public class Student {
                 ", studentId=" + studentId +
                 ", dateOfBirth='" + dateOfBirth + '\'' +
                 '}';
-    }
-}
-
-class StudentAcc extends Student {
-    public void createStid(int studentId, char[] password) {
-        this.setStudentId(studentId);
-        this.setPassword(password);
     }
 }

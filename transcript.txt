@@ -1,0 +1,49 @@
+BOTSWANA INTERNATIONAL UNIVERSITY OF SCIENCE AND TECHNOLOGY
+================== ACADEMIC TRANSCRIPT ==================
+
+Student ID: 2024123
+Name: Phemelo Moloi
+Program: Computer Science and Software Engineering
+Year of Study: 3
+Date of Birth: 2003-11-03
+
+=======================================================
+
+Year 1
+-------------------------------------------------------
+
+Semester 1
+Module Code  Module Name                Type          Credits  Mark  Grade
+----------------------------------------------------------------------------
+Math101     Pre-Calculus             Core                4   87.9      A
+Bio 101     Biology                  Core                4   78.8      B
+PHY 101     Physics                  Core                4   93.0     A+
+COMP1 01    Computer                 Core                3   84.6      A
+ALSS 101    Literature               Core                2   89.7      A
+CHEM 101    Chemistry                Core                4   78.0      B
+
+Semester GPA: 3.69
+Cumulative GPA: 3.69
+
+Academic Standing: GOOD STANDING
+
+
+Semester 2
+Module Code  Module Name                Type          Credits  Mark  Grade
+----------------------------------------------------------------------------
+MATH 102    Calculus                 Core                4   89.0      A
+BIO 102     Biology 2                Core                4   69.4      B
+PHY 102     Physics 2                Core                4   78.2      B
+STAT 101    Statistics               Core                3   60.7      C
+ALSS 102    Literature 2             Core                2   90.0     A+
+CHEM 102    Chemistry 2              Core                4   94.3     A+
+
+Semester GPA: 3.38
+Cumulative GPA: 3.53
+
+Academic Standing: WARNING
+
+=======================================================
+
+Final Cumulative GPA: 3.53
+

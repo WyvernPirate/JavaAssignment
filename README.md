@@ -128,6 +128,7 @@ Methods to calculate final grades, SGPA, and CGPA
 - Implemented file-related exception handling
 - Ensured all inputs are validated in the GUI
 
+## transcript part has been completed and error handling
 ### In-Progress Features
 
 #### 1. Transcript Generation

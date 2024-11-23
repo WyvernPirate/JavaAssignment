@@ -95,6 +95,25 @@ public class DatabaseController {
         return flag;
     }
 
+    public boolean addStudent(Student p, int id) {
+        boolean flag = false;
+        String query = "INSERT INTO Student(StudentID, Name, Surname, Program, Year, Dob) VALUES(?,?,?,?,?,?)";
+        try (PreparedStatement pstmt = this.conn.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            pstmt.setString(2, p.getFirstName());
+            pstmt.setString(3, p.getLastName());
+            pstmt.setString(4, p.getProgram());
+            pstmt.setInt(5, p.getYear());
+            pstmt.setDate(6, p.getDob());
+            pstmt.executeUpdate();
+            flag = true;
+        } catch (SQLException e) {
+            System.out.println("Error adding student: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
     // retrieve student information
     public Student retrieveStudentInfo(int studentId) {
         Student p = null;

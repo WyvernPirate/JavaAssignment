@@ -1,9 +1,21 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.html.parser.Element;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
 import java.time.DateTimeException;
@@ -782,11 +794,10 @@ public class GUI {
         viewStudentButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // display student details
-                System.out.println("View Student button clicked");
-                cPanel.removeAll();
-                cPanel.setLayout(new BorderLayout());
                 Student studentInfo = n.retrieveStudentInfo(id);
                 if (studentInfo != null) {
+                    cPanel.removeAll();
+                    cPanel.setLayout(new BorderLayout());
                     JPanel studentDetailsPanel = new JPanel();
                     studentDetailsPanel.setLayout(new GridLayout(0, 2));
                     studentDetailsPanel.add(new JLabel("Student ID:"));
@@ -800,7 +811,15 @@ public class GUI {
                     studentDetailsPanel.add(new JLabel("Date of Birth:"));
                     studentDetailsPanel.add(new JLabel(String.valueOf(studentInfo.getDob())));
 
-                    editSButton.setVisible(true);
+                    editSButton.setVisible(false);
+                    cPanel.add(studentDetailsPanel);
+
+                    cPanel.revalidate();
+                    cPanel.repaint();
+
+                } else {
+                    cPanel.add(new JLabel("No student info found"), BorderLayout.NORTH);
+
                     editSButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             // edit student details
@@ -809,11 +828,11 @@ public class GUI {
                             cPanel.setLayout(new BorderLayout());
                             JPanel editStudentPanel = new JPanel();
                             editStudentPanel.setLayout(new GridLayout(0, 2));
-                            JTextField firstNameField = new JTextField(studentInfo.getFirstName());
-                            JTextField lastNameField = new JTextField(studentInfo.getLastName());
-                            JTextField programField = new JTextField(studentInfo.getProgram());
-                            JTextField yearField = new JTextField(String.valueOf(studentInfo.getYear()));
-                            JTextField dobField = new JTextField(String.valueOf(studentInfo.getDob()));
+                            JTextField firstNameField = new JTextField();
+                            JTextField lastNameField = new JTextField();
+                            JTextField programField = new JTextField();
+                            JTextField yearField = new JTextField();
+                            JTextField dobField = new JTextField();
                             editStudentPanel.add(new JLabel("First Name:"));
                             editStudentPanel.add(firstNameField);
                             editStudentPanel.add(new JLabel("Last Name:"));
@@ -833,49 +852,59 @@ public class GUI {
                                     String lastName = lastNameField.getText();
                                     String program = programField.getText();
                                     int year;
-                                    try {
-                                        year = Integer.parseInt(yearField.getText());
-                                    } catch (NumberFormatException ex) {
-                                        JOptionPane.showMessageDialog(cPanel,
-                                                "Invalid year of study. Please enter a valid year.");
-                                        return;
-                                    }
-                                    Date dob;
-                                    try {
-                                        dob = Date.valueOf(dobField.getText()); // Ensure dobStr is in the correct
-                                                                                // format (yyyy-MM-dd)
-                                    } catch (IllegalArgumentException ex) {
-                                        JOptionPane.showMessageDialog(cPanel,
-                                                "Invalid date of birth. Please use the format yyyy-MM-dd.");
-                                        return;
-                                    }
 
-                                    // Validate first name and last name
-                                    if (!firstName.matches("[a-zA-Z]+")) {
-                                        JOptionPane.showMessageDialog(cPanel, "First name can only contain letters");
-                                        return;
-                                    }
-                                    if (!lastName.matches("[a-zA-Z]+")) {
-                                        JOptionPane.showMessageDialog(cPanel, "Last name can only contain letters");
-                                        return;
-                                    }
+                                    // check if fields are non empty
+                                    if (!firstName.isEmpty() || !lastName.isEmpty() || !program.isEmpty()
+                                            || !yearField.getText().isEmpty() || !dobField.getText().isEmpty()) {
 
-                                    // Validate program
-                                    if (!program.matches("[a-zA-Z ]+")) {
-                                        JOptionPane.showMessageDialog(cPanel,
-                                                "Program can only contain letters and spaces");
-                                        return;
-                                    }
+                                        try {
+                                            year = Integer.parseInt(yearField.getText());
+                                        } catch (NumberFormatException ex) {
+                                            JOptionPane.showMessageDialog(cPanel,
+                                                    "Invalid year of study. Please enter a valid year.");
+                                            return;
+                                        }
+                                        Date dob;
+                                        try {
+                                            dob = Date.valueOf(dobField.getText()); // Ensure dobStr is in the correct
+                                                                                    // format (yyyy-MM-dd)
+                                        } catch (IllegalArgumentException ex) {
+                                            JOptionPane.showMessageDialog(cPanel,
+                                                    "Invalid date of birth. Please use the format yyyy-MM-dd.");
+                                            return;
+                                        }
 
-                                    Student p = new Student(firstName, lastName, program, year, dob);
-                                    // update student info in database
-                                    if (n.updateStudentInfo(p, id) == true) {
-                                        // update student info in GUI
-                                        JOptionPane.showMessageDialog(cPanel, "Student details edited successfully");
-                                        // refresh student details panel
-                                        viewStudentButton.doClick();
+                                        // Validate first name and last name
+                                        if (!firstName.matches("[a-zA-Z]+")) {
+                                            JOptionPane.showMessageDialog(cPanel,
+                                                    "First name can only contain letters");
+                                            return;
+                                        }
+                                        if (!lastName.matches("[a-zA-Z]+")) {
+                                            JOptionPane.showMessageDialog(cPanel, "Last name can only contain letters");
+                                            return;
+                                        }
+
+                                        // Validate program
+                                        if (!program.matches("[a-zA-Z ]+")) {
+                                            JOptionPane.showMessageDialog(cPanel,
+                                                    "Program can only contain letters and spaces");
+                                            return;
+                                        }
+
+                                        Student p = new Student(firstName, lastName, program, year, dob);
+                                        // update student info in database
+                                        if (n.addStudent(p, id) == true) {
+                                            // update student info in GUI
+                                            JOptionPane.showMessageDialog(cPanel,
+                                                    "Student details added successfully");
+                                            // refresh student details panel
+                                            viewStudentButton.doClick();
+                                        } else {
+                                            JOptionPane.showMessageDialog(cPanel, "Failed to add student details");
+                                        }
                                     } else {
-                                        JOptionPane.showMessageDialog(cPanel, "Failed to edit student details");
+                                        JOptionPane.showMessageDialog(cPanel, "Please fill in all fields");
                                     }
                                 }
                             });
@@ -885,17 +914,15 @@ public class GUI {
                             cPanel.repaint();
                         }
                     });
+
                     JPanel buttonPanel = new JPanel();
                     buttonPanel.add(editSButton);
-                    cPanel.add(studentDetailsPanel, BorderLayout.CENTER);
                     cPanel.add(buttonPanel, BorderLayout.SOUTH);
-                } else {
-                    cPanel.add(new JLabel("No student info found"), BorderLayout.CENTER);
+                    editSButton.setVisible(true);
                 }
                 cPanel.revalidate();
                 cPanel.repaint();
             }
-
         });
 
         transcriptButton.addActionListener(new ActionListener() {
@@ -1027,6 +1054,10 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 // print to txt file
                 try (PrintWriter writer = new PrintWriter("transcript.txt")) {
+                    // add the school logo
+                    writer.println("=======================================================\n");
+                    writer.println("Transcript\n");
+                    writer.println("=======================================================\n");
                     writer.println(transcript.toString());
                     JOptionPane.showMessageDialog(cPanel, "Transcript Printed to transcript.txt");
                 } catch (FileNotFoundException ex) {
@@ -1039,6 +1070,23 @@ public class GUI {
         printButtonPDF.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // print to pdf file
+                try {
+                    Document document = new Document();
+
+                    PdfWriter.getInstance(document, new FileOutputStream("transcript.pdf"));
+                    document.open();
+                    Image logo = Image.getInstance("biust-logo.png");
+                    logo.scaleToFit(400, 350);
+
+                    document.add(logo);
+                    document.add(new Paragraph(transcript.toString()));
+                    document.close();
+                    JOptionPane.showMessageDialog(cPanel, "Transcript Printed to transcript.pdf");
+                    // Open the PDF file in the default PDF viewer
+                    Desktop.getDesktop().open(new File("transcript.pdf"));
+                } catch (DocumentException | IOException ex) {
+                    JOptionPane.showMessageDialog(null, "Error printing transcript: " + ex.getMessage());
+                }
 
             }
         });

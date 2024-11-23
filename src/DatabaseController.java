@@ -119,18 +119,62 @@ public class DatabaseController {
         return p;
     }
 
+    // delete a student from database
+    public boolean removeStudent(int id) {
+        boolean flag = false;
+        String query = "DELETE FROM Student WHERE StudentID = ?";
+        try (PreparedStatement pstmt = this.conn.prepareStatement(query)) {
+            pstmt.setInt(1, id);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                flag = true;
+            } else {
+                System.out.println("Student not found");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error deleting student: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    // retrieve all students from database
+    public List<Student> retrieveAllStudents() {
+        List<Student> students = new ArrayList<>();
+        String query = "SELECT * FROM Student";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Student p = new Student();
+                    p.setStudentId(rs.getInt("StudentID"));
+                    p.setFirstName(rs.getString("Name"));
+                    p.setLastName(rs.getString("Surname"));
+                    p.setProgram(rs.getString("Program"));
+                    p.setYear(rs.getInt("Year"));
+                    p.setDob(rs.getDate("Dob"));
+                    students.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving all students: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return students;
+    }
+
     // add a module from module object
     public boolean addModule(Module m, int studentID) {
         boolean flag = false;
-        String query = "INSERT INTO Modules(StudentID, ModuleID, ModuleName,Marks,ModuleCredits, Semester,Year) VALUES(?,?,?,?,?,?,?)";
+        String query = "INSERT INTO Modules(StudentID, ModuleID, ModuleName,Type, Marks,ModuleCredits, Semester,Year) VALUES(?,?,?,?,?,?,?,?)";
         try (PreparedStatement pstmt = this.conn.prepareStatement(query)) {
             pstmt.setInt(1, studentID);
             pstmt.setString(2, m.getCode());
             pstmt.setString(3, m.getName());
-            pstmt.setDouble(4, m.getMark());
-            pstmt.setInt(5, m.getCredits());
-            pstmt.setInt(6, m.getSemester());
-            pstmt.setInt(7, m.getYear());
+            pstmt.setString(4, m.getType());
+            pstmt.setDouble(5, m.getMark());
+            pstmt.setInt(6, m.getCredits());
+            pstmt.setInt(7, m.getSemester());
+            pstmt.setInt(8, m.getYear());
             pstmt.executeUpdate();
             System.out.println("Module successfully added");
             flag = true;
@@ -152,6 +196,7 @@ public class DatabaseController {
                     Module m = new Module(
                             rs.getString("ModuleID"),
                             rs.getString("ModuleName"),
+                            rs.getString("Type"),
                             rs.getDouble("Marks"),
                             rs.getInt("ModuleCredits"),
                             rs.getInt("Semester"),
@@ -190,15 +235,16 @@ public class DatabaseController {
     // edit a module from database
     public boolean editModule(Module m, int studentID) {
         boolean flag = false;
-        String query = "UPDATE Modules SET ModuleName = ?, Marks = ?, ModuleCredits = ?, Semester= ?, Year = ? WHERE StudentID = ? AND ModuleID = ?";
+        String query = "UPDATE Modules SET ModuleName = ?, Type = ?, Marks = ?, ModuleCredits = ?, Semester= ?, Year = ? WHERE StudentID = ? AND ModuleID = ?";
         try (PreparedStatement pstmt = this.conn.prepareStatement(query)) {
             pstmt.setString(1, m.getName());
-            pstmt.setDouble(2, m.getMark());
-            pstmt.setInt(3, m.getCredits());
-            pstmt.setInt(4, m.getSemester());
-            pstmt.setInt(5, m.getYear());
-            pstmt.setInt(6, studentID);
-            pstmt.setString(7, m.getCode());
+            pstmt.setString(2, m.getType());
+            pstmt.setDouble(3, m.getMark());
+            pstmt.setInt(4, m.getCredits());
+            pstmt.setInt(5, m.getSemester());
+            pstmt.setInt(6, m.getYear());
+            pstmt.setInt(7, studentID);
+            pstmt.setString(8, m.getCode());
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
                 flag = true;
